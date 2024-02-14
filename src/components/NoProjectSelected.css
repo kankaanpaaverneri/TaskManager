@@ -1,0 +1,19 @@
+
+
+#no-project-selected h1 {
+    margin: 1rem;
+}
+
+#no-project-selected button {
+    border: none;
+    border-radius: 5px;
+    background: black;
+    color: white;
+    padding: 1rem;
+    margin: 1rem;
+    cursor: pointer;
+}
+
+#no-project-selected button:hover {
+    background: rgb(74, 74, 74);
+}
