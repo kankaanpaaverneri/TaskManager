@@ -10,8 +10,10 @@ app.use(bodyParser.json());
 
 const getAllProjects = require(path.join(__dirname, 'routes', 'getAllProjects.js'));
 const addProject = require(path.join(__dirname, 'routes', 'addProject.js'));
-
+const addNewTask = require(path.join(__dirname, 'routes', 'addNewTask.js'));
+app.use(addNewTask);
 app.use(getAllProjects);
 app.use(addProject);
+
 
 app.listen(3000);

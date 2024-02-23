@@ -16,6 +16,7 @@ const CreateNewProject = () => {
 
     async function goToNoProjectSelected() {
         dispatch(windowManagerActions.noProjectSelected());
+
         try {
             const promise = await fetch(getAllProjectsUrl);
             const data = await promise.json();
@@ -28,7 +29,6 @@ const CreateNewProject = () => {
             console.log("Error goToNoProjectSelected: ", error);
             setError(error);
         }
-        
     }
 
     function handleSubmit(event) {
@@ -40,6 +40,7 @@ const CreateNewProject = () => {
             date: date.current.value,
         }
 
+        
         fetch(addProjectUrl, {
             method: 'POST',
             headers: {

@@ -2,6 +2,8 @@ import { useRef } from 'react';
 import './EditSelectedProject.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { projectsActions } from '../store/store';
+import { addNewTaskUrl } from '../serverEndPoints';
+
 const EditSelectedProject = () => {
     const taskRef = useRef();
     const dispatch = useDispatch();
@@ -14,6 +16,25 @@ const EditSelectedProject = () => {
         if(!task) return;
 
         dispatch(projectsActions.addProjectTask({newTask: task, projectId: selectedProjectId}));
+        
+        fetch(addNewTaskUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                taskName: task,
+                projectId: selectedProjectId,
+            }),
+        })
+        .then(response => response.json())
+        .then(() => {
+            console.log("POST SUCCESS");
+        })
+        .catch(error => {
+            console.log("Error in POST: ", error);
+        })
+        taskRef.current.value = "";
     }
 
     function clearTask(taskId) {
