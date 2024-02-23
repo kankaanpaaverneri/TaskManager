@@ -10,14 +10,13 @@ import { useState } from 'react'
 function App() {
 
   const windowManager = useSelector(state => state.windowManager.windowManager);
-  const [selectedProject, setSelectedProject] = useState();
   return (
     <div id="app">
       <Header/>
-      <Sidebar setSelectedProject={setSelectedProject}/>
+      <Sidebar/>
       {windowManager.noProjectSelected && <NoProjectSelected/>}
       {windowManager.createNewProject && <CreateNewProject/>}
-      {windowManager.editProject && <EditSelectedProject selectedProject={selectedProject}/>}
+      {windowManager.editProject && <EditSelectedProject/>}
     </div>
   )
 }

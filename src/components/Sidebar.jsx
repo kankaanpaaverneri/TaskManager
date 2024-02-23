@@ -4,8 +4,9 @@ import HamburgerIconWhite from '/HamburgerWhite.svg'
 import { useDispatch, useSelector } from 'react-redux';
 import { windowManagerActions, projectsActions } from '../store/store';
 import { getAllProjectsUrl } from '../serverEndPoints';
+import { selectedProjectActions } from '../store/store';
 
-const Sidebar = ({setSelectedProject}) => {
+const Sidebar = () => {
     const [dataVisible, setDataVisible] = useState('false');
     const dispatch = useDispatch();
     const projects = useSelector(state => state.projects.projects);
@@ -20,18 +21,13 @@ const Sidebar = ({setSelectedProject}) => {
 
     function handleCreateNewProjectClick() {
         dispatch(windowManagerActions.createNewProject());
+        handleMobileToggleClick();
     }
 
     function handleSelectProjectClick(projectId) {
         dispatch(windowManagerActions.editProject());
-        setSelectedProject(()=> {
-            const selectedProject = projects.find(project => {
-                if(project.id === projectId)
-                    return project;
-            });
-
-            return selectedProject;
-        });
+        dispatch(selectedProjectActions.selectProject(projectId));
+        handleMobileToggleClick();
     }
 
     async function getRecentProjects() {
@@ -49,7 +45,7 @@ const Sidebar = ({setSelectedProject}) => {
         }
         setLoadingProjects(false);
     }
-    
+
     useEffect(() => {
         getRecentProjects();
         setLoadingProjects(false);

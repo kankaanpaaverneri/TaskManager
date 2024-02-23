@@ -19,7 +19,10 @@ section {
     align-items: center;
     flex-direction: column;
     margin-left: 10%;
-    
+}
+
+.center {
+    text-align: center;
 }
 
 @media (max-width: 35em) {

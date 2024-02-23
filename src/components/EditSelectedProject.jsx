@@ -1,6 +1,25 @@
+import { useRef } from 'react';
 import './EditSelectedProject.css'
+import { useDispatch, useSelector } from 'react-redux';
+import { projectsActions } from '../store/store';
+const EditSelectedProject = () => {
+    const taskRef = useRef();
+    const dispatch = useDispatch();
+    const projects = useSelector(state => state.projects.projects);
+    const selectedProjectId = useSelector(state => state.currentProject.currentProject);
+    const selectedProject = projects.find(project => project.id === selectedProjectId);
 
-const EditSelectedProject = ({selectedProject}) => {
+    function handleAddTaskClick() {
+        const task = taskRef.current.value;
+        if(!task) return;
+
+        dispatch(projectsActions.addProjectTask({newTask: task, projectId: selectedProjectId}));
+    }
+
+    function clearTask(taskId) {
+        dispatch(projectsActions.clearProjectTask({taskId: taskId, projectId: selectedProjectId}));
+    }
+
     return (
         <section>
             <div className='upper-section'>
@@ -18,7 +37,20 @@ const EditSelectedProject = ({selectedProject}) => {
                 </div>
             </div>
             <div className='lower-section'>
-                <h1>Tasks</h1>
+                <span className='center'><h1>Tasks</h1></span>
+                <label>Add task</label>
+                <div className='add-task-controls'>
+                    <input ref={taskRef} type='text' />
+                    <button onClick={handleAddTaskClick}>Add task</button>
+                </div>
+                <ol>
+                    {selectedProject.tasks.map((task) => {
+                        return <li key={task.id}>
+                            <label>{task.taskName}</label>
+                            <button onClick={() => clearTask(task.id)}>Clear</button>
+                        </li>
+                    })}
+                </ol>
             </div>
             
         </section>
