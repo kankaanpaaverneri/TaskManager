@@ -1,5 +1,4 @@
 
-
 .mobile-nav-toggle {
     display: none;
     background: none;
@@ -13,6 +12,7 @@
     color: white;
     position: fixed;
     inset: 0 80% 0 0;
+    overflow-y: scroll;
 }
 
 .primary-navigation button {

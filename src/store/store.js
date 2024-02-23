@@ -1,5 +1,4 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
-
 const initiaWindowState = {
     windowManager: {
         noProjectSelected: true,
@@ -30,10 +29,29 @@ const windowManagerSlice = createSlice({
     }
 });
 
+const initialProjectsState = {
+    projects: []
+}
+
+const projectsSlice = createSlice({
+    name: 'projects',
+    initialState: initialProjectsState,
+    reducers: {
+        setProjects(state, action) {
+            console.log(action.payload);
+            state.projects = action.payload;
+        }
+    } 
+});
+
 const store = configureStore({
-    reducer: windowManagerSlice.reducer
+    reducer: {
+        windowManager: windowManagerSlice.reducer,
+        projects: projectsSlice.reducer
+    }
 });
 
 export const windowManagerActions = windowManagerSlice.actions;
+export const projectsActions = projectsSlice.actions;
 
 export default store;

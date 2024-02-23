@@ -1,7 +1,8 @@
 import { useDispatch } from "react-redux";
-import { windowManagerActions } from "../store/store";
+import { windowManagerActions, projectsActions } from "../store/store";
 import './CreateNewProject.css'
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { addProjectUrl, getAllProjectsUrl } from "../serverEndPoints";
 
 const CreateNewProject = () => {
 
@@ -11,17 +12,54 @@ const CreateNewProject = () => {
     const description = useRef();
     const date = useRef();
 
-    function goToNoProjectSelected() {
-        dispatch(windowManagerActions.noProjectSelected())
+    const [error, setError] = useState('');
+
+    async function goToNoProjectSelected() {
+        dispatch(windowManagerActions.noProjectSelected());
+        try {
+            const promise = await fetch(getAllProjectsUrl);
+            const data = await promise.json();
+            if(!promise.ok)
+                throw new Error("Error when going to noProjectSelected");
+
+            dispatch(projectsActions.setProjects(data));
+
+        } catch(error) {
+            console.log("Error goToNoProjectSelected: ", error);
+            setError(error);
+        }
+        
     }
 
     function handleSubmit(event) {
         event.preventDefault();
-        console.log(projectName.current.value);
-        console.log(description.current.value);
-        console.log(date.current.value);
-        console.log("Send data to backend...");
-        goToNoProjectSelected();
+
+        const data = {
+            projectName: projectName.current.value,
+            description: description.current.value,
+            date: date.current.value,
+        }
+
+        fetch(addProjectUrl, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data)
+        })
+        .then((response) => {
+            if(response.ok) {
+                console.log("Send successful: ", response);
+                goToNoProjectSelected();
+            } else {
+                console.log("Error sending data to backend response status: ", response.status);
+                setError(`HTTP Error ${response.status}: ${response.statusText}`);
+            }
+        })
+        .catch(error => {
+            console.log("Error sending data... to backend: ", error);
+            setError(error);
+        });
     }
 
     return (
@@ -39,6 +77,9 @@ const CreateNewProject = () => {
                     <button className="dark-button" type="submit">Add project</button>
                 </div>
             </form>
+            {error !== '' &&
+                <h1>{error.message}</h1>
+            }
         </section>
     );
 }
