@@ -2,7 +2,9 @@ import { useRef } from 'react';
 import './EditSelectedProject.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { projectsActions } from '../store/store';
-import { addNewTaskUrl } from '../serverEndPoints';
+import { addNewTaskUrl, clearTaskUrl, addTaskDone } from '../serverEndPoints';
+import UpperSection from './UpperSection';
+import LowerSection from './LowerSection';
 
 const EditSelectedProject = () => {
     const taskRef = useRef();
@@ -24,6 +26,7 @@ const EditSelectedProject = () => {
             },
             body: JSON.stringify({
                 taskName: task,
+                taskDone: false,
                 projectId: selectedProjectId,
             }),
         })
@@ -37,43 +40,49 @@ const EditSelectedProject = () => {
         taskRef.current.value = "";
     }
 
-    function clearTask(taskId) {
+    function handleClearTaskClick(taskId) {
         dispatch(projectsActions.clearProjectTask({taskId: taskId, projectId: selectedProjectId}));
+        fetch(clearTaskUrl, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({taskId: taskId, projectId: selectedProjectId})
+        })
+        .then(response => response.json())
+        .then(() => {
+            console.log("fetch in ClearTask succeeded");
+        })
+        .catch(error => {
+            console.log("Error in fetch at clearTask: ", error);
+        });
+    }
+
+    function handleTaskCompleteClick(taskId) {
+        dispatch(projectsActions.addTaskComplete({taskId: taskId, projectId: selectedProjectId}));
+        fetch(addTaskDone, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                taskId: taskId,
+                taskDone: true,
+                projectId: selectedProjectId
+            })
+        });
     }
 
     return (
         <section>
-            <div className='upper-section'>
-                <div id='project-details'>
-                    {selectedProject.projectName ?
-                    <h1>{selectedProject.projectName}</h1> : <h1>Ei projekti nimeä</h1>}
-                    {selectedProject.description ?
-                    <h2>{selectedProject.description}</h2> : <h2>Ei kuvausta</h2>}
-                    {selectedProject.date ?
-                    <h3>{selectedProject.date}</h3> : <h3>Ei deadlineä määritelty</h3>}
-                </div>
-                <div id='control-buttons'>
-                    <button>Edit</button>
-                    <button>Delete</button>
-                </div>
-            </div>
-            <div className='lower-section'>
-                <span className='center'><h1>Tasks</h1></span>
-                <label>Add task</label>
-                <div className='add-task-controls'>
-                    <input ref={taskRef} type='text' />
-                    <button onClick={handleAddTaskClick}>Add task</button>
-                </div>
-                <ol>
-                    {selectedProject.tasks.map((task) => {
-                        return <li key={task.id}>
-                            <label>{task.taskName}</label>
-                            <button onClick={() => clearTask(task.id)}>Clear</button>
-                        </li>
-                    })}
-                </ol>
-            </div>
-            
+            <UpperSection selectedProject={selectedProject}/>
+            <LowerSection
+            selectedProject={selectedProject}
+            handleAddTaskClick={handleAddTaskClick}
+            handleClearTaskClick={handleClearTaskClick}
+            handleTaskCompleteClick={handleTaskCompleteClick}
+            ref={taskRef}
+            />
         </section>
     );
 }

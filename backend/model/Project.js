@@ -15,7 +15,7 @@ module.exports = class Project {
         this.#tasks = tasks;
     }
 
-    save() {
+    saveProject() {
         const projectData = {
             projectName: this.#title,
             description: this.#description,
@@ -50,6 +50,23 @@ module.exports = class Project {
             }
             callBack(allProjects); // Does error checking in the callback
         });
+    }
+
+    static readFile(callBack) {
+        fs.readFile(filePath, (error, fileContent) => {
+            let parsedFileContent = [];
+            if(error) {
+                console.log("Error reading file: ", error);
+                return;
+            }
+            parsedFileContent = JSON.parse(fileContent);
+            callBack(parsedFileContent);
+            
+        });
+    }
+
+    static writeFile(content, callBack) {
+        fs.writeFile(filePath, JSON.stringify(content), callBack);
     }
 
 

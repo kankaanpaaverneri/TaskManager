@@ -1,22 +1,26 @@
-const fs = require('fs');
-const path = require('path');
-const filePath = path.join(__dirname, '../', 'data', 'data.json');
-exports.addNewTask = (req, res, next) => {
-    const {taskName, projectId} = req.body;
+const Project = require('../model/Project');
 
-    fs.readFile(filePath, (error, fileContent) => {
-        let array = [];
-        if(!error) {
-            array = JSON.parse(fileContent);
-            array.forEach(element => {
-                if(element.id === projectId) {
-                    element.tasks.push({taskName: taskName, id: element.tasks.length+1});
-                }
-            });
-            fs.writeFile(filePath, JSON.stringify(array), (error) => {
-                if(!error) res.end();
-            });
-        }
+exports.addNewTask = (req, res, next) => {
+    const {taskName, taskDone, projectId} = req.body;
+
+    Project.readFile((fileContentArray) => {
+        fileContentArray.forEach(element => {
+            //Add task to appropriate project
+            if(element.id === projectId) {
+                element.tasks.push({
+                    taskName: taskName,
+                    taskDone: taskDone,
+                    id: element.tasks.length+1
+                });
+            }
+        });
+
+        //Rewrite data.json file
+        Project.writeFile(fileContentArray, (error) => {
+            if(error) {
+                console.log("Error writing to file: ", error);
+            }
+            res.end();
+        });
     });
-    
 }

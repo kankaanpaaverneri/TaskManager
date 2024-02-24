@@ -42,7 +42,7 @@ function getCurrentProjectIndex(projects, projectId) {
 
 function regenerateIds(tasks) {
     tasks.forEach((task, index) => {
-        task.id = index;
+        task.id = index+1;
     });
 }
 
@@ -62,6 +62,7 @@ const projectsSlice = createSlice({
                 ...state.projects[projectIndex].tasks,
                 {
                     taskName: newTask,
+                    taskDone: false,
                     id: state.projects[projectIndex].tasks.length + 1
                 }
             ];
@@ -75,14 +76,28 @@ const projectsSlice = createSlice({
             const projectIndex = getCurrentProjectIndex(state.projects, projectId);
 
             //Remove task
-            if(state.projects[projectIndex].tasks.length > 1) {
-                state.projects[projectIndex].tasks.splice(taskId, 1);
-            } else {
-                state.projects[projectIndex].tasks.pop();
-            }
+            const filteredTasks = state.projects[projectIndex].tasks.filter(task => {
+                if(task.id !== taskId)
+                    return task;
+            })
+
+            state.projects[projectIndex].tasks = filteredTasks;
             
             regenerateIds(state.projects[projectIndex].tasks);
-        } 
+        },
+
+        addTaskComplete(state, action) {
+            const {taskId, projectId} = action.payload;
+            const projectIndex = state.projects.findIndex(project => {
+                return project.id === projectId;
+            });
+
+            state.projects[projectIndex].tasks.forEach(task => {
+                if(task.id === taskId) {
+                    task.taskDone = true;
+                }
+            })
+        }
     } 
 });
 

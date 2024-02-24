@@ -1,0 +1,55 @@
+.lower-section {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.add-task-controls {
+    display: flex;
+    margin-bottom: 1rem;
+    justify-content: space-between;
+}
+
+.add-task-controls button {
+    margin-left: 1rem;
+    padding: 0.2rem 0.5rem;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.lower-section ol {
+    list-style: none;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    text-wrap: wrap;
+}
+
+li button {
+    background: white;
+    border: none;
+    border-radius: 2px;
+    padding: 0.2rem 0.5rem;
+}
+
+li button:hover {
+    cursor: pointer;
+    background: rgb(194, 194, 194);
+}
+
+.task-control-buttons {
+    display: flex;
+}
+
+.task-control-buttons button {
+    margin-left: 0.3rem;
+}
+
+.task-done {
+    color: green;
+}

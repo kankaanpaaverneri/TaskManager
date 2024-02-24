@@ -25,9 +25,16 @@ section {
     text-align: center;
 }
 
+.green-button {
+    background: rgba(100, 175, 100, 0.6);
+    color: white;
+    box-shadow: 1px 1px 2px black;
+}
+
 @media (max-width: 35em) {
     section {
         flex-wrap: wrap;
         margin-left: 20%;
+        margin-right: 5%;
     }
 }
