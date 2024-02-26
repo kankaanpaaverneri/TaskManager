@@ -13,7 +13,9 @@ const addProject = require(path.join(__dirname, 'routes', 'addProject.js'));
 const addNewTask = require(path.join(__dirname, 'routes', 'addNewTask.js'));
 const clearTask = require(path.join(__dirname, 'routes', 'clearTask.js'));
 const addTaskComplete = require(path.join(__dirname, 'routes', 'addTaskComplete.js'));
+const addPriority = require(path.join(__dirname, 'routes', 'addPriority.js'));
 
+app.use(addPriority);
 app.use(addTaskComplete);
 app.use(addNewTask);
 app.use(clearTask);

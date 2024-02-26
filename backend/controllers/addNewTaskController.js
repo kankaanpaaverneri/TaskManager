@@ -10,6 +10,7 @@ exports.addNewTask = (req, res, next) => {
                 element.tasks.push({
                     taskName: taskName,
                     taskDone: taskDone,
+                    taskPriority: 0,
                     id: element.tasks.length+1
                 });
             }
