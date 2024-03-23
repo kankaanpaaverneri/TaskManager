@@ -18,20 +18,23 @@
 
 @media (max-width: 1000px) {
     .upper-section {
-        gap: 0.5rem;
+        gap: 0rem;
+        text-wrap: wrap;
         font-size: 12px;
+        margin-left: 1rem;
     }
 }
 
 #control-buttons {
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
 }
 
 #control-buttons button {
     border: none;
-    margin: 0rem 0.1rem;
+    margin: 0.5rem 0.5rem;
     padding: 0.2rem 0.5rem;
     border-radius: 5px;
     cursor: pointer;
