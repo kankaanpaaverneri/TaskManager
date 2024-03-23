@@ -1,6 +1,6 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { quicksort } from "../quicksort";
-import { fetchPost, sortByPriorityUrl } from "../serverEndPoints";
+import { fetchPost, sortByPriorityUrl, editProjectDetailsUrl } from "../serverEndPoints";
 const initiaWindowState = {
     windowManager: {
         noProjectSelected: true,
@@ -127,6 +127,24 @@ const projectsSlice = createSlice({
 
             state.projects[projectIndex].tasks = [...sortedArray];
             fetchPost(sortByPriorityUrl, {projectId, tasks: sortedArray});
+        },
+        editProjectDetails(state, action) {
+            const {
+                projectId,
+                projectName,
+                projectDescription,
+                projectDate
+            } = action.payload;
+
+            const projectIndex = state.projects.findIndex(project => {
+                return project.id === projectId;
+            })
+
+            state.projects[projectIndex].projectName = projectName;
+            state.projects[projectIndex].description = projectDescription,
+            state.projects[projectIndex].date = projectDate;
+
+            fetchPost(editProjectDetailsUrl, {projectId, projectName, projectDescription, projectDate});
         }
     } 
 });
