@@ -16,7 +16,9 @@ const addTaskComplete = require(path.join(__dirname, 'routes', 'addTaskComplete.
 const addPriority = require(path.join(__dirname, 'routes', 'addPriority.js'));
 const sortByPriority = require(path.join(__dirname, 'routes', 'sortByPriority.js'));
 const editProjectDetails = require(path.join(__dirname, 'routes', 'editProjectDetails.js'));
+const clearProject = require(path.join(__dirname, 'routes', 'clearProject.js'));
 
+app.use(clearProject);
 app.use(editProjectDetails);
 app.use(sortByPriority);
 app.use(addPriority);

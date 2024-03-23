@@ -1,6 +1,6 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { quicksort } from "../quicksort";
-import { fetchPost, sortByPriorityUrl, editProjectDetailsUrl } from "../serverEndPoints";
+import { fetchPost, sortByPriorityUrl, editProjectDetailsUrl, clearProjectUrl } from "../serverEndPoints";
 const initiaWindowState = {
     windowManager: {
         noProjectSelected: true,
@@ -43,9 +43,9 @@ function getCurrentProjectIndex(projects, projectId) {
     return projectIndex;
 }
 
-function regenerateIds(tasks) {
-    tasks.forEach((task, index) => {
-        task.id = index+1;
+function regenerateArrayIds(array) {
+    array.forEach((element, index) => {
+        element.id = index+1;
     });
 }
 
@@ -71,11 +71,11 @@ const projectsSlice = createSlice({
                 }
             ];
 
-            regenerateIds(state.projects[projectIndex].tasks);
+            regenerateArrayIds(state.projects[projectIndex].tasks);
         },
         
         clearProjectTask(state, action) {
-            const {taskId, projectId} = action.payload
+            const {taskId, projectId} = action.payload;
 
             const projectIndex = getCurrentProjectIndex(state.projects, projectId);
 
@@ -87,7 +87,7 @@ const projectsSlice = createSlice({
 
             state.projects[projectIndex].tasks = filteredTasks;
             
-            regenerateIds(state.projects[projectIndex].tasks);
+            regenerateArrayIds(state.projects[projectIndex].tasks);
         },
 
         addTaskComplete(state, action) {
@@ -145,6 +145,22 @@ const projectsSlice = createSlice({
             state.projects[projectIndex].date = projectDate;
 
             fetchPost(editProjectDetailsUrl, {projectId, projectName, projectDescription, projectDate});
+        },
+        clearProject(state, action) {
+            const {projectId} = action.payload;
+            console.log(projectId);
+
+            //const projectIndex = getCurrentProjectIndex(state.projects, projectId);
+            const filteredProjects = state.projects.filter((project) => {
+                if(project.id !== projectId)
+                    return project;
+            });
+
+            state.projects = filteredProjects;
+
+            regenerateArrayIds(state.projects);
+
+            fetchPost(clearProjectUrl, filteredProjects);
         }
     } 
 });

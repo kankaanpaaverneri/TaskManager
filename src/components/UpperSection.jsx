@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import './UpperSection.css'
-import { useDispatch } from 'react-redux';
-import { projectsActions } from '../store/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { projectsActions, windowManagerActions } from '../store/store';
 
 const UpperSection = ({selectedProject}) => {
     const [edit, setEdit] = useState(false);
@@ -11,6 +11,7 @@ const UpperSection = ({selectedProject}) => {
     const projectDateRef = useRef();
 
     const dispatch = useDispatch();
+    const projects = useSelector(state => state.projects.projects);
 
     function editProjectDetails() {
         if(edit) {
@@ -41,6 +42,11 @@ const UpperSection = ({selectedProject}) => {
         }
     }
 
+    function projectDone() {
+        dispatch(windowManagerActions.noProjectSelected());
+        dispatch(projectsActions.clearProject({projectId: selectedProject.id}));
+    }
+
     return (
         <div className='upper-section'>
                 {!edit && <div className='project-details'>
@@ -64,7 +70,7 @@ const UpperSection = ({selectedProject}) => {
                     </div>}
                 <div id='control-buttons'>
                     <button onClick={editProjectDetails}>{edit ? 'Save' : 'Edit'}</button>
-                    <button>Done</button>
+                    <button onClick={projectDone}>Done</button>
                 </div>
         </div>
     );
