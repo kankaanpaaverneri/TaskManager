@@ -9,11 +9,15 @@
 body {
     color: white;
     background: linear-gradient(rgba(79, 34, 228, 0.6), rgba(141, 115, 225, 0.6));
-    height: 100dvh;
+    background-size: cover;
+    background-position: center;
+    height: 100%;
 }
 
 section {
+    overflow-y: auto;
     display: flex;
+    background-size: cover;
     text-align: center;
     justify-content: center;
     align-items: center;
@@ -35,6 +39,5 @@ section {
     section {
         flex-wrap: wrap;
         margin-left: 20%;
-        margin-right: 5%;
     }
 }

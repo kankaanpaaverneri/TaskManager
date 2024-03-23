@@ -40,7 +40,6 @@ const CreateNewProject = () => {
             date: date.current.value,
         }
 
-        
         fetch(addProjectUrl, {
             method: 'POST',
             headers: {
@@ -49,12 +48,12 @@ const CreateNewProject = () => {
             body: JSON.stringify(data)
         })
         .then((response) => {
-            if(response.ok) {
-                console.log("Send successful: ", response);
-                goToNoProjectSelected();
-            } else {
+            if(!response.ok) {
                 console.log("Error sending data to backend response status: ", response.status);
                 setError(`HTTP Error ${response.status}: ${response.statusText}`);
+            } else {
+                console.log("Send successful: ", response);
+                goToNoProjectSelected();
             }
         })
         .catch(error => {

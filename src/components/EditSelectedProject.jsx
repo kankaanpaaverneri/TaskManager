@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import './EditSelectedProject.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { projectsActions } from '../store/store';
-import { addNewTaskUrl, clearTaskUrl, addTaskDone } from '../serverEndPoints';
+import { addNewTaskUrl, fetchPost } from '../serverEndPoints';
 import UpperSection from './UpperSection';
 import LowerSection from './LowerSection';
 
@@ -19,58 +19,15 @@ const EditSelectedProject = () => {
 
         dispatch(projectsActions.addProjectTask({newTask: task, projectId: selectedProjectId}));
         
-        fetch(addNewTaskUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                taskName: task,
-                taskDone: false,
-                projectId: selectedProjectId,
-            }),
-        })
-        .then(response => response.json())
-        .then(() => {
-            console.log("POST SUCCESS");
-        })
-        .catch(error => {
-            console.log("Error in POST: ", error);
-        })
+        const data = {
+            taskName: task,
+            taskDone: false,
+            projectId: selectedProjectId,
+        }
+        
+        fetchPost(addNewTaskUrl, data);
+
         taskRef.current.value = "";
-    }
-
-    function handleClearTaskClick(taskId) {
-        dispatch(projectsActions.clearProjectTask({taskId: taskId, projectId: selectedProjectId}));
-        fetch(clearTaskUrl, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({taskId: taskId, projectId: selectedProjectId})
-        })
-        .then(response => response.json())
-        .then(() => {
-            console.log("fetch in ClearTask succeeded");
-        })
-        .catch(error => {
-            console.log("Error in fetch at clearTask: ", error);
-        });
-    }
-
-    function handleTaskCompleteClick(taskId) {
-        dispatch(projectsActions.addTaskComplete({taskId: taskId, projectId: selectedProjectId}));
-        fetch(addTaskDone, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                taskId: taskId,
-                taskDone: true,
-                projectId: selectedProjectId
-            })
-        });
     }
 
     return (
@@ -79,8 +36,6 @@ const EditSelectedProject = () => {
             <LowerSection
             selectedProject={selectedProject}
             handleAddTaskClick={handleAddTaskClick}
-            handleClearTaskClick={handleClearTaskClick}
-            handleTaskCompleteClick={handleTaskCompleteClick}
             ref={taskRef}
             />
         </section>

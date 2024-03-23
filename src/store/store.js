@@ -1,4 +1,6 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
+import { quicksort } from "../quicksort";
+import { fetchPost, sortByPriorityUrl } from "../serverEndPoints";
 const initiaWindowState = {
     windowManager: {
         noProjectSelected: true,
@@ -33,6 +35,7 @@ const initialProjectsState = {
     projects: []
 }
 
+//Helper functions
 function getCurrentProjectIndex(projects, projectId) {
     const projectIndex = projects.findIndex(project => {
         return project.id === projectId;
@@ -63,6 +66,7 @@ const projectsSlice = createSlice({
                 {
                     taskName: newTask,
                     taskDone: false,
+                    taskPriority: 0,
                     id: state.projects[projectIndex].tasks.length + 1
                 }
             ];
@@ -88,6 +92,7 @@ const projectsSlice = createSlice({
 
         addTaskComplete(state, action) {
             const {taskId, projectId} = action.payload;
+
             const projectIndex = state.projects.findIndex(project => {
                 return project.id === projectId;
             });
@@ -97,6 +102,31 @@ const projectsSlice = createSlice({
                     task.taskDone = true;
                 }
             })
+        },
+
+        addTaskPriority(state, action) {
+            const {taskId, priority, projectId} = action.payload;
+            
+            const projectIndex = state.projects.findIndex(project => {
+                return project.id === projectId;
+            });
+
+            state.projects[projectIndex].tasks.forEach(task => {
+                if(task.id === taskId)
+                    task.taskPriority = priority;
+            });
+        },
+        sortByPriority(state, action) {
+            const {projectId, tasks} = action.payload;
+
+            let sortedArray = [...tasks];
+            quicksort(sortedArray, 0, sortedArray.length - 1);
+            const projectIndex = state.projects.findIndex(project => {
+                return project.id === projectId;
+            });
+
+            state.projects[projectIndex].tasks = [...sortedArray];
+            fetchPost(sortByPriorityUrl, {projectId, tasks: sortedArray});
         }
     } 
 });

@@ -1,11 +1,37 @@
 import { forwardRef } from 'react';
 import './LowerSection.css'
+import Table from './Table';
+import { useDispatch } from 'react-redux';
+import { projectsActions } from '../store/store';
+import { clearTaskUrl, addTaskDoneUrl, fetchPost } from '../serverEndPoints';
 
 const LowerSection = forwardRef(({
     selectedProject,
     handleAddTaskClick,
-    handleClearTaskClick,
-    handleTaskCompleteClick}, ref) => {
+    }, ref) => {
+        const dispatch = useDispatch();
+
+    function handleClearTaskClick(taskId) {
+        dispatch(projectsActions.clearProjectTask({taskId: taskId, projectId: selectedProject.id}));
+
+        const data = {taskId: taskId, projectId: selectedProject.id};
+
+        fetchPost(clearTaskUrl, data);
+    }
+
+    function handleTaskCompleteClick(taskId) {
+        dispatch(projectsActions.addTaskComplete({taskId: taskId, projectId: selectedProject.id}));
+
+        const data = {
+            taskId: taskId,
+            taskDone: true,
+            taskPriority: 0,
+            projectId: selectedProject.id
+        }
+
+        fetchPost(addTaskDoneUrl, data);
+    }
+    
     return (
         <div className='lower-section'>
             <span className='center'><h1>Tasks</h1></span>
@@ -14,18 +40,11 @@ const LowerSection = forwardRef(({
                 <input ref={ref} type='text' />
                 <button onClick={handleAddTaskClick}>Add task</button>
             </div>
-            <ol>
-                {selectedProject.tasks.map((task) => {
-                    return <li key={task.id}>
-                        {task.taskDone && <span>✅</span>}
-                        <label className={task.taskDone ? 'task-done' : ''} >{task.taskName}</label>
-                        <div className='task-control-buttons'>
-                            <button onClick={() => handleClearTaskClick(task.id)}>Clear</button>
-                            {!task.taskDone && <button className='green-button' onClick={() => handleTaskCompleteClick(task.id)}>Task done</button>}
-                        </div>
-                    </li>
-                })}
-            </ol>
+            <Table
+            selectedProject={selectedProject}
+            handleClearTaskClick={handleClearTaskClick}
+            handleTaskCompleteClick={handleTaskCompleteClick}
+            />
         </div>
     );
 });
