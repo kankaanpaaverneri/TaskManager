@@ -38,7 +38,6 @@ const Sidebar = () => {
 
             if(!promise.ok)
                 throw new Error("Error getting recent projects");
-
             dispatch(projectsActions.setProjects(data));
         } catch(error) {
             console.log("Error getting recent projects: ", error);
@@ -73,7 +72,7 @@ const Sidebar = () => {
                     return <li key={project.id}>
                         <button
                             onClick={() => handleSelectProjectClick(project.id)}>
-                            {project.projectName}
+                            {project.title}
                         </button>
                     </li>
                 })}

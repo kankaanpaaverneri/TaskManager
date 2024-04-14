@@ -140,7 +140,7 @@ const projectsSlice = createSlice({
                 return project.id === projectId;
             })
 
-            state.projects[projectIndex].projectName = projectName;
+            state.projects[projectIndex].title = projectName;
             state.projects[projectIndex].description = projectDescription,
             state.projects[projectIndex].date = projectDate;
 
@@ -148,9 +148,9 @@ const projectsSlice = createSlice({
         },
         clearProject(state, action) {
             const {projectId} = action.payload;
-            console.log(projectId);
 
-            //const projectIndex = getCurrentProjectIndex(state.projects, projectId);
+            const projectDone = state.projects.find(project => project.id === projectId);
+
             const filteredProjects = state.projects.filter((project) => {
                 if(project.id !== projectId)
                     return project;
@@ -160,7 +160,7 @@ const projectsSlice = createSlice({
 
             regenerateArrayIds(state.projects);
 
-            fetchPost(clearProjectUrl, filteredProjects);
+            fetchPost(clearProjectUrl, projectDone);
         }
     } 
 });

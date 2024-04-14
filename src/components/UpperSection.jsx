@@ -11,14 +11,13 @@ const UpperSection = ({selectedProject}) => {
     const projectDateRef = useRef();
 
     const dispatch = useDispatch();
-    const projects = useSelector(state => state.projects.projects);
 
     function editProjectDetails() {
         if(edit) {
             const data = {
                 projectId: selectedProject.id,
                 projectName: projectNameRef.current.value === '' ?
-                selectedProject.projectName : projectNameRef.current.value,
+                selectedProject.title : projectNameRef.current.value,
                 projectDescription: projectDescriptionRef.current.value === '' ?
                 selectedProject.description : projectDescriptionRef.current.value,
                 projectDate: projectDateRef.current.value === '' ?
@@ -46,12 +45,11 @@ const UpperSection = ({selectedProject}) => {
         dispatch(windowManagerActions.noProjectSelected());
         dispatch(projectsActions.clearProject({projectId: selectedProject.id}));
     }
-
     return (
         <div className='upper-section'>
                 {!edit && <div className='project-details'>
-                    {selectedProject.projectName ?
-                    <h1>{selectedProject.projectName}</h1> :
+                    {selectedProject.title ?
+                    <h1>{selectedProject.title}</h1> :
                     <h1>Ei projekti nimeä</h1>}
                     {selectedProject.description ?
                     <h2>{selectedProject.description}</h2> :
@@ -61,8 +59,8 @@ const UpperSection = ({selectedProject}) => {
                     <h3>Ei deadlineä määritelty</h3>}
                 </div>}
                 {edit && <div className='project-details'>
-                    <input ref={projectNameRef} placeholder={selectedProject.projectName === '' ?
-                    'Ei projekti nimeä' : selectedProject.projectName} />
+                    <input ref={projectNameRef} placeholder={selectedProject.title === '' ?
+                    'Ei projekti nimeä' : selectedProject.title} />
                     <input ref={projectDescriptionRef} placeholder={selectedProject.description === '' ?
                     'Ei kuvausta' : selectedProject.description}/>
                     <input ref={projectDateRef} placeholder={selectedProject.date === '' ?
