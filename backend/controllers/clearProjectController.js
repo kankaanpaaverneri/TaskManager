@@ -1,12 +1,18 @@
 const Project = require('../model/Project.js');
 
 exports.clearProject = (req, res, next) => {
-    const projects = req.body;
-    Project.writeFile(projects, (error) => {
-        if(error) {
-            console.log("Error clearing projects: ", error);
+    const project = req.body;
 
-            res.end();
-        }
+    Project.removeProject(project.id)
+    .then(() => {
+        console.log("success");
+        res.end();
+    })
+    .catch((err) => {
+        console.log("failed: ", err);
+        res.end();
     });
+
+    
+    
 }

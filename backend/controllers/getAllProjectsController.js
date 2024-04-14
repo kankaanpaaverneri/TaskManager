@@ -1,10 +1,12 @@
 const Project = require('../model/Project');
 
 exports.getAllProjects = async (req, res, next) => {
-    Project.fetchAllProjects((allProjects) => {
-        if(allProjects) {
-            res.json(allProjects);
-        }
+    try {
+        const [columns] = await Project.fetchAllProjects();
+        res.json(columns);
+        console.log(columns);
         res.end();
-    });
+    } catch(error) {
+        console.log("Error getting allProjects: ", error);
+    }
 }

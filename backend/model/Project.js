@@ -1,6 +1,4 @@
-const fs = require('fs');
-const path = require('path');
-const filePath = path.join(__dirname, '../', 'data', 'data.json');
+const database = require('../util/database');
 
 module.exports = class Project {
     #title;
@@ -16,40 +14,26 @@ module.exports = class Project {
     }
 
     saveProject() {
-        const projectData = {
-            projectName: this.#title,
-            description: this.#description,
-            date: this.#date,
-            tasks: this.#tasks,
-        }
-        fs.readFile(filePath, (error, fileContent) => {
-            let newArray = [];
-            if(!error) {
-                newArray = JSON.parse(fileContent);
-            }
-
-            if(newArray.length === 0)
-                projectData.id = 1;
-            else
-                projectData.id = newArray.length + 1;
-
-            newArray.push(projectData);
-            fs.writeFile(filePath, JSON.stringify(newArray), (error) => {
-                if(error) {
-                    console.log("ERROR WRITING FILE");
-                }
-            });
-        });
+        return database.execute(`
+        INSERT INTO projects (title, description, date, tasks) VALUES (?, ?, ?, ?)
+        `, [this.#title, this.#description, this.#date, this.#tasks]);
     }
 
-    static fetchAllProjects (callBack) {
-        fs.readFile(filePath, (error, data) => {
-            let allProjects;
-            if(!error) {
-                allProjects = JSON.parse(data);
-            }
-            callBack(allProjects); // Does error checking in the callback
-        });
+    static removeProject(id) {
+        return database.execute(`DELETE FROM projects WHERE id='${id}'`);
+    }
+
+    static updateProject(updatedProject) {
+        console.log(updatedProject);
+        return database.execute(`UPDATE projects
+        SET title='${updatedProject.projectName}',
+        description='${updatedProject.projectDescription}',
+        date='${updatedProject.projectDate}'
+        WHERE id = ${updatedProject.projectId}`);
+    }
+
+    static fetchAllProjects () {
+        return database.execute('SELECT * FROM projects');
     }
 
     static readFile(callBack) {
