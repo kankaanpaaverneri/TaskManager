@@ -2,7 +2,6 @@ import { useRef } from 'react';
 import './EditSelectedProject.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { projectsActions } from '../store/store';
-import { addNewTaskUrl, fetchPost } from '../serverEndPoints';
 import UpperSection from './UpperSection';
 import LowerSection from './LowerSection';
 
@@ -19,14 +18,6 @@ const EditSelectedProject = () => {
 
         dispatch(projectsActions.addProjectTask({newTask: task, projectId: selectedProjectId}));
         
-        const data = {
-            taskName: task,
-            taskDone: false,
-            projectId: selectedProjectId,
-        }
-        
-        fetchPost(addNewTaskUrl, data);
-
         taskRef.current.value = "";
     }
 

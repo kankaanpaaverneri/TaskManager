@@ -2,20 +2,27 @@ const Project = require('../model/Project');
 
 exports.clearTask = (req, res, next) => {
     const {taskId, projectId} = req.body;
-    Project.readFile((fileContent) => {
-        const tasks = fileContent[projectId-1].tasks;
 
-        //Clear task
-        const filteredTasks = tasks.filter(task => task.id !== taskId);
-        //Reassing ids
-        filteredTasks.forEach((task, index) => task.id = index+1);
+    Project.fetchAllProjects().then(projects => {
+        const filteredProjects = projects[0].filter(project => project.id === projectId);
+        const selectedProject = filteredProjects[0];
 
-        fileContent[projectId-1].tasks = filteredTasks;
+        selectedProject.tasks = [...selectedProject.tasks.filter(task => {
+            if(task.taskId !== taskId) return task;
+        })];
 
-        Project.writeFile(fileContent, (error) => {
-            if(error)
-                console.log("Error when writing to a file in Clear task: ", error);
+        selectedProject.tasks.forEach((task, index) => {
+            task.taskId = index + 1;
+        });
+
+        Project.updateTasks(projectId, selectedProject.tasks)
+        .then(() => {
+            console.log("Success");
+            res.end();
+        })
+        .catch((err) => {
+            console.log("Error: ", err);
             res.end();
         });
-    });
+    })
 }

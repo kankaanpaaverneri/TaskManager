@@ -14,9 +14,10 @@ const Table = ({selectedProject, handleClearTaskClick, handleTaskCompleteClick})
     }
 
     function handlePriorityClick(event, taskId) {
-        const priority = Number(event.target.value);
+        const taskPriority = Number(event.target.value);
+        console.log(taskPriority);
 
-        const data = {taskId, priority, projectId: selectedProject.id}
+        const data = {taskId, taskPriority, projectId: selectedProject.id}
         dispatch(projectsActions.addTaskPriority(data));
         fetchPost(addPriorityUrl, data);
     }
@@ -33,14 +34,14 @@ const Table = ({selectedProject, handleClearTaskClick, handleTaskCompleteClick})
             <tbody>
                 {selectedProject.tasks.map(task => {
                     return (
-                        <tr key={task.id}>
+                        <tr key={task.taskId}>
                             <td>
                                 {
                                 !task.taskDone && <input
                                 className='priority'
                                 type='number'
                                 value={task.taskPriority === 0 ? "" : task.taskPriority}
-                                onChange={(e) => handlePriorityClick(e, task.id)}/>
+                                onChange={(e) => handlePriorityClick(e, task.taskId)}/>
                                 }
                             </td>
                             <td>
@@ -49,11 +50,11 @@ const Table = ({selectedProject, handleClearTaskClick, handleTaskCompleteClick})
                                 </p>
                             </td>
                             <td>
-                                <button onClick={() => handleClearTaskClick(task.id)}>Clear</button>
+                                <button onClick={() => handleClearTaskClick(task.taskId)}>Clear</button>
                                 {!task.taskDone &&
                                 <button
                                 className='green-button'
-                                onClick={() => handleTaskCompleteClick(task.id)}>
+                                onClick={() => handleTaskCompleteClick(task.taskId)}>
                                     Task done
                                 </button>
                                 }

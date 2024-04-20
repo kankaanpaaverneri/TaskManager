@@ -12,10 +12,9 @@ const LowerSection = forwardRef(({
         const dispatch = useDispatch();
 
     function handleClearTaskClick(taskId) {
+        console.log(taskId);
         dispatch(projectsActions.clearProjectTask({taskId: taskId, projectId: selectedProject.id}));
-
         const data = {taskId: taskId, projectId: selectedProject.id};
-
         fetchPost(clearTaskUrl, data);
     }
 

@@ -1,6 +1,6 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { quicksort } from "../quicksort";
-import { fetchPost, sortByPriorityUrl, editProjectDetailsUrl, clearProjectUrl } from "../serverEndPoints";
+import { fetchPost, addNewTaskUrl, sortByPriorityUrl, editProjectDetailsUrl, clearProjectUrl } from "../serverEndPoints";
 const initiaWindowState = {
     windowManager: {
         noProjectSelected: true,
@@ -60,18 +60,25 @@ const projectsSlice = createSlice({
             const {newTask, projectId} = action.payload;
 
             const projectIndex = getCurrentProjectIndex(state.projects, projectId);
-
+            regenerateArrayIds(state.projects[projectIndex].tasks);
             state.projects[projectIndex].tasks = [
                 ...state.projects[projectIndex].tasks,
                 {
+                    projectId: projectId,
                     taskName: newTask,
                     taskDone: false,
                     taskPriority: 0,
-                    id: state.projects[projectIndex].tasks.length + 1
+                    taskId: state.projects[projectIndex].tasks.length + 1
                 }
             ];
-
-            regenerateArrayIds(state.projects[projectIndex].tasks);
+            
+            fetchPost(addNewTaskUrl, {
+                projectId: projectId,
+                taskName: newTask,
+                taskDone: false,
+                taskPriority: 0,
+                taskId: state.projects[projectIndex].tasks.length,
+            });
         },
         
         clearProjectTask(state, action) {
@@ -81,7 +88,7 @@ const projectsSlice = createSlice({
 
             //Remove task
             const filteredTasks = state.projects[projectIndex].tasks.filter(task => {
-                if(task.id !== taskId)
+                if(task.taskId !== taskId)
                     return task;
             })
 
@@ -98,24 +105,25 @@ const projectsSlice = createSlice({
             });
 
             state.projects[projectIndex].tasks.forEach(task => {
-                if(task.id === taskId) {
+                if(task.taskId === taskId) {
                     task.taskDone = true;
                 }
             })
         },
 
         addTaskPriority(state, action) {
-            const {taskId, priority, projectId} = action.payload;
+            const {taskId, taskPriority, projectId} = action.payload;
             
             const projectIndex = state.projects.findIndex(project => {
                 return project.id === projectId;
             });
 
             state.projects[projectIndex].tasks.forEach(task => {
-                if(task.id === taskId)
-                    task.taskPriority = priority;
+                if(task.taskId === taskId)
+                    task.taskPriority = taskPriority;
             });
         },
+
         sortByPriority(state, action) {
             const {projectId, tasks} = action.payload;
 

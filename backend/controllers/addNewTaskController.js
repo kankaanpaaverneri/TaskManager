@@ -1,27 +1,35 @@
 const Project = require('../model/Project');
 
 exports.addNewTask = (req, res, next) => {
-    const {taskName, taskDone, projectId} = req.body;
+    const {
+        projectId,
+        taskName,
+        taskDone,
+        taskPriority,
+        taskId
+    } = req.body;
 
-    Project.readFile((fileContentArray) => {
-        fileContentArray.forEach(element => {
-            //Add task to appropriate project
-            if(element.id === projectId) {
-                element.tasks.push({
-                    taskName: taskName,
-                    taskDone: taskDone,
-                    taskPriority: 0,
-                    id: element.tasks.length+1
-                });
-            }
-        });
+    Project.fetchAllProjects(projectId).then((projects) => {
+        const selectedProject = projects[0].filter(project => project.id === projectId);
 
-        //Rewrite data.json file
-        Project.writeFile(fileContentArray, (error) => {
-            if(error) {
-                console.log("Error writing to file: ", error);
-            }
+        selectedProject[0].tasks.push({
+            taskName: taskName,
+            taskDone: taskDone,
+            taskPriority: taskPriority,
+            taskId: taskId});
+
+        Project.addTask(projectId, selectedProject[0].tasks)
+        .then(() => {
+            console.log("Success");
+            res.end();
+        })
+        .catch((err) => {
+            console.log("Failed task insert: ", err);
             res.end();
         });
+    })
+    .catch((err) => {
+        console.log("Failed: ", err);
+        res.end();
     });
 }

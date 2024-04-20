@@ -24,7 +24,6 @@ module.exports = class Project {
     }
 
     static updateProject(updatedProject) {
-        console.log(updatedProject);
         return database.execute(`UPDATE projects
         SET title='${updatedProject.projectName}',
         description='${updatedProject.projectDescription}',
@@ -32,27 +31,21 @@ module.exports = class Project {
         WHERE id = ${updatedProject.projectId}`);
     }
 
+    static addTask(projectId, updatedTasks) {
+        return database.execute(`UPDATE projects
+        SET tasks='${JSON.stringify(updatedTasks)}'
+        WHERE id = ${projectId}`);
+    }
+
+    static updateTasks(projectId, updatedTasks) {
+        return database.execute(`UPDATE projects
+        SET tasks='${JSON.stringify(updatedTasks)}'
+        WHERE id = ${projectId}`);
+    }
+
     static fetchAllProjects () {
         return database.execute('SELECT * FROM projects');
     }
-
-    static readFile(callBack) {
-        fs.readFile(filePath, (error, fileContent) => {
-            let parsedFileContent = [];
-            if(error) {
-                console.log("Error reading file: ", error);
-                return;
-            }
-            parsedFileContent = JSON.parse(fileContent);
-            callBack(parsedFileContent);
-            
-        });
-    }
-
-    static writeFile(content, callBack) {
-        fs.writeFile(filePath, JSON.stringify(content), callBack);
-    }
-
 
     //getters and setters
     set title(title) {
